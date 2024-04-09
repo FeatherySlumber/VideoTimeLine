@@ -1,0 +1,168 @@
+﻿<Window x:Class="VideoTimeLine.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        xmlns:local="clr-namespace:VideoTimeLine"
+        xmlns:tlc="clr-namespace:TimeLineControl;assembly=TimeLineControl"
+        mc:Ignorable="d"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+ 
+        Title="{Binding CurrentVideo.Name, FallbackValue=VideoTimeLine}" Height="450" Width="800">
+    <Window.DataContext>
+        <local:ViewModel />
+    </Window.DataContext>
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/ScrollViewerStyleDictionary.xaml"/>
+                <ResourceDictionary Source="/SliderStyleDictionary.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <local:TimeSpanConverter x:Key="TimeToDouble"/>
+            <local:ValueChangedConverter x:Key="ValueToTime"/>
+            <sys:Double x:Key="PlayListHeight">80.0</sys:Double>
+            <Thickness x:Key="PlayListBorderThickness">0,0.5</Thickness>
+            <Style x:Key="PlayListStyle" TargetType="{x:Type ListBox}">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type ListBox}">
+                            <Border>
+                                <ScrollViewer Style="{StaticResource FixedSpaceScrollViewer}">
+                                    <i:Interaction.Behaviors>
+                                        <local:VerticalScrollBehavior/>
+                                    </i:Interaction.Behaviors>
+                                    <ItemsPresenter/>
+                                </ScrollViewer>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="ItemContainerStyle">
+                    <Setter.Value>
+                        <Style TargetType="ListBoxItem">
+                            <Setter Property="BorderThickness" Value="{StaticResource PlayListBorderThickness}"/>
+                            <Setter Property="BorderBrush" Value="{x:Static SystemColors.ControlDarkDarkBrush}" />
+                            <Setter Property="Background" Value="{x:Static SystemColors.WindowBrush}"/>
+                            <Setter Property="Height" Value="{StaticResource PlayListHeight}"/>
+                        </Style>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </ResourceDictionary>
+    </Window.Resources>
+    <DockPanel>
+        <DockPanel DockPanel.Dock="Bottom">
+            <Slider Value="1" x:Name="ScaleSlider" DockPanel.Dock="Right" Minimum="0.1" Maximum="100" Width="160" VerticalAlignment="Center"/>
+            <TextBox Text="{Binding Value,ElementName=ScaleSlider, FallbackValue=1, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Right" Width="60" VerticalContentAlignment="Center"/>
+            <Label Content="表示倍率:" Margin="2,0,0,0" DockPanel.Dock="Right"/>
+            <Label Content="ビデオ読込:" DockPanel.Dock="Left"/>
+            <Button Command="{Binding DirectorySelectCommand, Mode=OneTime}">
+                フォルダ選択
+            </Button>
+        </DockPanel>
+        <DockPanel DockPanel.Dock="Bottom" Height="200">
+            <DockPanel DockPanel.Dock="Top">
+                <Button Command="{Binding VideoPlayOrStopCommand, Mode=OneTime}" DockPanel.Dock="Left" Width="50">
+                    <Button.Style>
+                        <Style TargetType="{x:Type Button}">
+                            <Setter Property="Content" Value="停止"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Player.IsPlaying}" Value="False">
+                                    <Setter Property="Content" Value="再生"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+                <TextBlock Text="{Binding Player.Position, StringFormat=\{0:hh\\:mm\\:ss\}}" Margin="5,0" DockPanel.Dock="Left"/>
+                <TextBlock Text="{Binding Player.PlayLimit, StringFormat=\{0:hh\\:mm\\:ss\}}" Margin="5,0" DockPanel.Dock="Right"/>
+                <Slider Style="{StaticResource SliderStyle}" x:Name="MainTimeLine"
+                        IsMoveToPointEnabled="True"
+                        Minimum="{Binding Source={x:Static sys:TimeSpan.Zero}, Converter={StaticResource TimeToDouble}, Mode=OneTime}"
+                        Maximum="{Binding Player.PlayLimit, Converter={StaticResource TimeToDouble}}"
+                        Value="{Binding Player.Position, Converter={StaticResource TimeToDouble}, Mode=OneWay}">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="ValueChanged" >
+                            <i:InvokeCommandAction Command="{Binding SeekCommand, Mode=OneTime}" EventArgsConverter="{StaticResource ValueToTime}"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </Slider>
+            </DockPanel>
+            <Border BorderBrush="{x:Static SystemColors.ControlDarkBrush}" BorderThickness="1">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="5"/>
+                        <ColumnDefinition Width="4*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <ListBox x:Name="VideoNameList" Grid.Column="0" ItemsSource="{Binding Videos, Mode=OneWay}" SelectedItem="{Binding CurrentVideo, Mode=OneWayToSource}"
+                             HorizontalContentAlignment="Stretch"
+                             VerticalContentAlignment="Stretch"
+                             ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                             VirtualizingPanel.ScrollUnit="Pixel"
+                             Style="{StaticResource PlayListStyle}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <DockPanel>
+                                    <Button DockPanel.Dock="Bottom" Command="{Binding DataContext.TimeChangeCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}, Mode=OneTime}" CommandParameter="{Binding}">
+                                        <Button.Template>
+                                            <ControlTemplate TargetType="{x:Type Button}">
+                                                <StackPanel>
+                                                    <Line HorizontalAlignment="Stretch" X1="0" X2="{Binding ActualWidth,RelativeSource={RelativeSource Self}}" SnapsToDevicePixels="True" Opacity="1" StrokeThickness="2" DockPanel.Dock="Bottom" StrokeDashArray="5" Stroke="{x:Static SystemColors.ActiveBorderBrush}"/>
+                                                    <Label HorizontalAlignment="Stretch">
+                                                        <DockPanel>
+                                                            <TextBlock DockPanel.Dock="Left" Text="開始" Margin="0,0,5,0"/>
+                                                            <TextBlock Text="{Binding Start}">
+                                                                <TextBlock.TextDecorations>
+                                                                    <TextDecoration>
+                                                                        <TextDecoration.Pen>
+                                                                            <Pen Brush="{x:Static SystemColors.HighlightBrush}"/>
+                                                                        </TextDecoration.Pen>
+                                                                    </TextDecoration>
+                                                                </TextBlock.TextDecorations>
+                                                            </TextBlock>
+                                                        </DockPanel>
+                                                    </Label>
+                                                </StackPanel>
+                                            </ControlTemplate>
+                                        </Button.Template>
+                                    </Button>
+                                    <ScrollViewer ScrollChanged="CancelScroll" Focusable="False" VerticalScrollBarVisibility="Auto">
+                                        <TextBlock Text="{Binding Name, Mode=OneWay}" TextWrapping="Wrap" IsHitTestVisible="False"/>
+                                    </ScrollViewer>
+                                </DockPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch"  Background="{x:Static SystemColors.ScrollBarBrush}"/>
+                    <ListBox Grid.Column="2" SelectedIndex="{Binding SelectedIndex, ElementName=VideoNameList}" ItemsSource="{Binding Videos, Mode=OneWay}"
+                             ScrollViewer.VerticalScrollBarVisibility="Visible"
+                             ScrollViewer.HorizontalScrollBarVisibility="Visible"
+                             VirtualizingPanel.ScrollUnit="Pixel"
+                             HorizontalContentAlignment="Left"
+                             VerticalContentAlignment="Stretch"
+                         Style="{StaticResource PlayListStyle}"  >
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <tlc:TimeLine VerticalAlignment="Stretch" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Margin="5,2.5"
+                                              Scale="{Binding Value, ElementName=ScaleSlider, Mode=OneWay}"
+                                              Start="{Binding Start, Converter={StaticResource TimeToDouble}, Mode=TwoWay}" 
+                                              Duration="{Binding Duration, Converter={StaticResource TimeToDouble}}" 
+                                              Current="{Binding DataContext.Player.Position, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}, Converter={StaticResource TimeToDouble}}"
+                                              End="{Binding DataContext.Player.PlayLimit, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}, Converter={StaticResource TimeToDouble}}"/>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
+            </Border>
+        </DockPanel>
+        <Viewbox>
+            <Rectangle Fill="{Binding Player.Brush}" Width="{Binding CurrentVideo.Width}" Height="{Binding CurrentVideo.Height}">
+            </Rectangle>
+        </Viewbox>
+    </DockPanel>
+</Window>

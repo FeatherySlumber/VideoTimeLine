@@ -1,0 +1,41 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Blend for Visual Studio Version 17
+VisualStudioVersion = 17.6.33829.357
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VideoTimeLine", "VideoTimeLine\VideoTimeLine.csproj", "{6642E042-1E24-4956-8838-7995646EB50B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{AF20DCE4-DC63-48F9-B54B-84D11D7D7F0C} = {AF20DCE4-DC63-48F9-B54B-84D11D7D7F0C}
+		{AF90D1F6-F7C9-4B0E-8AF0-4E31116B252E} = {AF90D1F6-F7C9-4B0E-8AF0-4E31116B252E}
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VideoInfo", "VideoInfo\VideoInfo.csproj", "{AF90D1F6-F7C9-4B0E-8AF0-4E31116B252E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimeLineControl", "TimeLineControl\TimeLineControl.csproj", "{AF20DCE4-DC63-48F9-B54B-84D11D7D7F0C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6642E042-1E24-4956-8838-7995646EB50B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6642E042-1E24-4956-8838-7995646EB50B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6642E042-1E24-4956-8838-7995646EB50B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6642E042-1E24-4956-8838-7995646EB50B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AF90D1F6-F7C9-4B0E-8AF0-4E31116B252E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF90D1F6-F7C9-4B0E-8AF0-4E31116B252E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF90D1F6-F7C9-4B0E-8AF0-4E31116B252E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF90D1F6-F7C9-4B0E-8AF0-4E31116B252E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AF20DCE4-DC63-48F9-B54B-84D11D7D7F0C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF20DCE4-DC63-48F9-B54B-84D11D7D7F0C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF20DCE4-DC63-48F9-B54B-84D11D7D7F0C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF20DCE4-DC63-48F9-B54B-84D11D7D7F0C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AF401660-E184-43DB-96DB-3A06A194EB92}
+	EndGlobalSection
+EndGlobal

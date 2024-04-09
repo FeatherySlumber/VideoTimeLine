@@ -1,0 +1,71 @@
+﻿<Window x:Class="VideoTimeLine.TimeInput"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:VideoTimeLine" 
+        d:DataContext="{d:DesignInstance Type=local:TimeInputViewModel}"
+        mc:Ignorable="d"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        x:Name="TimeWindow"
+        Title="TimeInput" Width="320" SizeToContent="WidthAndHeight">
+    <Window.Resources>
+        <Style x:Key="Time" TargetType="TextBox">
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="TextAlignment" Value="Center"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="Margin" Value="3"/>
+            <Setter Property="Padding" Value="5"/>
+        </Style>
+        <Style x:Key="TimeSpace" TargetType="TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="TextAlignment" Value="Center"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="Margin" Value="3"/>
+        </Style>
+    </Window.Resources>
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="5*"/>
+            </Grid.ColumnDefinitions>
+            <TextBox Grid.Column="0" Text="{Binding Hours, NotifyOnValidationError=True, StringFormat={}{0:D2}, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Time}">
+                <i:Interaction.Triggers>
+                    <i:PropertyChangedTrigger Binding="{Binding Text, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TextBox}}, Mode=OneTime}">
+                        <local:UpdateAction Key="Time"/>
+                    </i:PropertyChangedTrigger>
+                </i:Interaction.Triggers>
+            </TextBox>
+            <TextBlock Grid.Column="1" Text=":" Style="{StaticResource TimeSpace}"/>
+            <TextBox Grid.Column="2" Text="{Binding Minutes, NotifyOnValidationError=True, StringFormat={}{0:D2}, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Time}">
+                <i:Interaction.Triggers>
+                    <i:PropertyChangedTrigger Binding="{Binding Text, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TextBox}}, Mode=OneTime}">
+                        <local:UpdateAction Key="Time"/>
+                    </i:PropertyChangedTrigger>
+                </i:Interaction.Triggers>
+            </TextBox>
+            <TextBlock Grid.Column="3" Text=":" Style="{StaticResource TimeSpace}"/>
+            <TextBox Grid.Column="4" Text="{Binding Seconds, NotifyOnValidationError=True, StringFormat={}{0:00.0000000}, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Time}">
+                <i:Interaction.Triggers>
+                    <i:PropertyChangedTrigger Binding="{Binding Text, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TextBox}}, Mode=OneTime}">
+                        <local:UpdateAction Key="Time"/>
+                    </i:PropertyChangedTrigger>
+                </i:Interaction.Triggers>
+            </TextBox>
+        </Grid>
+        <TextBlock Grid.Row="1" Text="{Binding Result}" Style="{StaticResource TimeSpace}"/>
+        <Button Grid.Row="2" Command="{Binding OKCommand, Mode=OneTime}" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}">
+            OK
+        </Button>
+    </Grid>
+</Window>
